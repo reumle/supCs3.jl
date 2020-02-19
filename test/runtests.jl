@@ -1,5 +1,5 @@
 using Test
-using SCS
+using supCs3
 
 tests = ["direct.jl",
          "indirect.jl",

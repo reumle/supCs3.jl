@@ -37,6 +37,43 @@ SCSMatrix(m::ManagedSCSMatrix) =
     SCSMatrix(pointer(m.values), pointer(m.rowval), pointer(m.colptr), m.m, m.n)
 
 
+# struct SCSSettings
+#     normalize::Int # boolean, heuristic data rescaling
+#     scale::Cdouble # if normalized, rescales by this factor
+#     rho_x::Cdouble # x equality constraint scaling
+#     max_time_milliseconds::Cdouble #NEW
+#     max_iters::Int # maximum iterations to take
+#     previous_max_iters::Int #NEW
+#     eps::Cdouble # convergence tolerance
+#     alpha::Cdouble # relaxation parameter
+#     cg_rate::Cdouble # for indirect, tolerance goes down like (1/iter)^cg_rate
+#     verbose::Int # boolean, write out progress
+#     warm_start::Int # boolean, warm start (put initial guess in Sol struct)
+#     #acceleration_lookback::Int # acceleration memory parameter
+#     #write_data_filename::Cstring
+#     scs_int do_super_scs::Int #NEW /**< boolean: whether to use superscs or not */
+#     scs_int k0 ::Int #NEW
+#     scs_float c_bl::Cdouble #NEW
+#     scs_int k1::Int #NEW
+#     scs_int k2::Int #NEW
+#     scs_float c1::Cdouble #NEW
+#     scs_float sse::Cdouble #NEW
+#     scs_int ls::Int #NEW
+#     scs_float beta::Cdouble #NEW
+#     scs_float sigma::Cdouble #NEW
+#     ScsDirectionType direction;
+#     scs_float thetabar::Cdouble #NEW
+#     scs_int memory::Int #NEW
+#     scs_int tRule::Int #NEW
+#     scs_int broyden_init_scaling::Int #NEW
+#     scs_int do_record_progress::Int #NEW
+#     scs_int do_override_streams::Int #NEW
+#     FILE *RESTRICT output_stream;
+#
+#     SCSSettings() = new()
+#     SCSSettings(normalize, scale, rho_x, max_iters, eps, alpha, cg_rate, verbose, warm_start, acceleration_lookback, write_data_filename) = new(normalize, scale, rho_x, max_iters, eps, alpha, cg_rate, verbose, warm_start, acceleration_lookback, write_data_filename)
+# end
+
 struct SCSSettings
     normalize::Int # boolean, heuristic data rescaling
     scale::Cdouble # if normalized, rescales by this factor

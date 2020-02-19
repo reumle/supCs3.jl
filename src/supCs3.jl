@@ -1,4 +1,6 @@
-module SCS
+module supCs3
+
+greet() = print("Hello World!")
 
 if isfile(joinpath(dirname(@__FILE__), "..", "deps", "deps.jl"))
     include(joinpath(dirname(@__FILE__), "..", "deps", "deps.jl"))

@@ -77,7 +77,7 @@ end
 # use of @gc_preserve in the SCS_solve helper above.
 
 # Take Ref{}s because SCS might modify the structs
-for (T, lib) in zip([SCS.Direct, SCS.Indirect], [SCS.direct, SCS.indirect])
+for (T, lib) in zip([supCs3.Direct, supCs3.Indirect], [supCs3.direct, supCs3.indirect])
     @eval begin
 
         function SCS_set_default_settings(::Type{$T}, data::Ref{SCSData})
@@ -113,5 +113,5 @@ end
 
 # This one is safe to call
 function SCS_version()
-    return unsafe_string(ccall((:scs_version, SCS.direct), Cstring, ()))
+    return unsafe_string(ccall((:scs_version, supCs3.direct), Cstring, ()))
 end

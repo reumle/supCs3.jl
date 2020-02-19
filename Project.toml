@@ -1,7 +1,7 @@
-name = "SCS"
-uuid = "c946c3f1-0d1f-5ce8-9dea-7daa1f7e2d13"
-repo = "https://github.com/JuliaOpt/SCS.jl.git"
-version = "0.6.4"
+name = "supCs3"
+uuid = "13c56d96-f22b-4fc2-8d3c-1e1c7b889f16"
+authors = ["reumle"]
+version = "0.1.0"
 
 [deps]
 BinaryProvider = "b99e7846-7c00-51b0-8f62-c81ae34c0232"
@@ -9,17 +9,14 @@ Libdl = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 MathOptInterface = "b8f27783-ece8-5eb3-8dc8-9495eed66fee"
 MathProgBase = "fdba3010-5040-5b88-9595-932c9decdf73"
+Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [compat]
-BinaryProvider = "0.3, 0.4, 0.5"
-MathOptInterface = "0.9.7"
-MathProgBase = "~0.5.0, ~0.6, ~0.7"
 julia = "1"
 
 [extras]
-Compat = "34da2185-b29b-5c13-b0c7-acf172513d20"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "Compat"]
+test = ["Test"]

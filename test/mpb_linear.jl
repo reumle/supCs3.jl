@@ -1,10 +1,10 @@
 #############################################################################
-# SCS.jl
+# supCs3.jl
 # Wrapper around the SCS solver https://github.com/cvxgrp/scs
-# See http://github.com/karanveerm/SCS.jl
+# See http://github.com/karanveerm/supCs3.jl
 #############################################################################
 # test/mpb_linear.jl
-# Test the MathProgBase.jl interface for the SCS.jl solver wrapper
+# Test the MathProgBase.jl interface for the supCs3.jl solver wrapper
 #############################################################################
 
 using MathProgBase

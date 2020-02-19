@@ -1,7 +1,7 @@
 #############################################################################
-# SCS.jl
+# supCs3.jl
 # Wrapper around the SCS solver https://github.com/cvxgrp/scs
-# See http://github.com/JuliaOpt/SCS.jl
+# See http://github.com/JuliaOpt/supCs3.jl
 #############################################################################
 # test/options.jl
 # Tests the ability to pass options
@@ -33,8 +33,8 @@ MathProgBase.optimize!(m)
 @test !isapprox(MathProgBase.getobjval(m), -99.0, atol=1e-14, rtol=0.0)
 
 # With a warmstart from the eps = 1e-14 solution, solution should be extremely accurate even after 1 iteration
-SCS.addoption!(m, :warm_start, true)
-SCS.addoption!(m, :max_iters, 1)
+supCs3.addoption!(m, :warm_start, true)
+supCs3.addoption!(m, :max_iters, 1)
 MathProgBase.optimize!(m)
 @test isapprox(MathProgBase.getobjval(m), -99.0, atol=1e-12, rtol=0.0)
 @test !isapprox(MathProgBase.getobjval(m), -99.0, atol=1e-14, rtol=0.0)
@@ -79,4 +79,4 @@ catch ex
     ex
 end
 
-@test err.msg == "Unrecognized linear_solver passed to SCS: AAA;\nRecognized options are: SCS.Direct, SCS.Indirect."
+@test err.msg == "Unrecognized linear_solver passed to SCS: AAA;\nRecognized options are: supCs3.Direct, supCs3.Indirect."

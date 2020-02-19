@@ -9,10 +9,10 @@ const MOIB = MOI.Bridges
 # UniversalFallback is needed for starting values
 const CACHE = MOIU.UniversalFallback(MOIU.Model{Float64}())
 
-import SCS
+import supCs3
 
-for T in [SCS.Direct, SCS.Indirect]
-    optimizer = SCS.Optimizer(linear_solver=T, eps=1e-6)
+for T in [supCs3.Direct, supCs3.Indirect]
+    optimizer = supCs3.Optimizer(linear_solver=T, eps=1e-6)
     MOI.set(optimizer, MOI.Silent(), true)
 
     @testset "SolverName" begin
@@ -50,7 +50,7 @@ for T in [SCS.Direct, SCS.Indirect]
 
     @testset "ADMMIterations attribute with $T" begin
         MOIT.linear1test(bridged, config)
-        @test MOI.get(bridged, SCS.ADMMIterations()) > 0
+        @test MOI.get(bridged, supCs3.ADMMIterations()) > 0
     end
 
     @testset "Continuous quadratic problems with $T" begin
