@@ -37,59 +37,69 @@ SCSMatrix(m::ManagedSCSMatrix) =
     SCSMatrix(pointer(m.values), pointer(m.rowval), pointer(m.colptr), m.m, m.n)
 
 
-# struct SCSSettings
-#     normalize::Int # boolean, heuristic data rescaling
-#     scale::Cdouble # if normalized, rescales by this factor
-#     rho_x::Cdouble # x equality constraint scaling
-#     max_time_milliseconds::Cdouble #NEW
-#     max_iters::Int # maximum iterations to take
-#     previous_max_iters::Int #NEW
-#     eps::Cdouble # convergence tolerance
-#     alpha::Cdouble # relaxation parameter
-#     cg_rate::Cdouble # for indirect, tolerance goes down like (1/iter)^cg_rate
-#     verbose::Int # boolean, write out progress
-#     warm_start::Int # boolean, warm start (put initial guess in Sol struct)
-#     #acceleration_lookback::Int # acceleration memory parameter
-#     #write_data_filename::Cstring
-#     scs_int do_super_scs::Int #NEW /**< boolean: whether to use superscs or not */
-#     scs_int k0 ::Int #NEW
-#     scs_float c_bl::Cdouble #NEW
-#     scs_int k1::Int #NEW
-#     scs_int k2::Int #NEW
-#     scs_float c1::Cdouble #NEW
-#     scs_float sse::Cdouble #NEW
-#     scs_int ls::Int #NEW
-#     scs_float beta::Cdouble #NEW
-#     scs_float sigma::Cdouble #NEW
-#     ScsDirectionType direction;
-#     scs_float thetabar::Cdouble #NEW
-#     scs_int memory::Int #NEW
-#     scs_int tRule::Int #NEW
-#     scs_int broyden_init_scaling::Int #NEW
-#     scs_int do_record_progress::Int #NEW
-#     scs_int do_override_streams::Int #NEW
-#     FILE *RESTRICT output_stream;
-#
-#     SCSSettings() = new()
-#     SCSSettings(normalize, scale, rho_x, max_iters, eps, alpha, cg_rate, verbose, warm_start, acceleration_lookback, write_data_filename) = new(normalize, scale, rho_x, max_iters, eps, alpha, cg_rate, verbose, warm_start, acceleration_lookback, write_data_filename)
-# end
-
 struct SCSSettings
     normalize::Int # boolean, heuristic data rescaling
     scale::Cdouble # if normalized, rescales by this factor
     rho_x::Cdouble # x equality constraint scaling
+    max_time_milliseconds::Cdouble #NEW
     max_iters::Int # maximum iterations to take
+    previous_max_iters::Int #NEW
     eps::Cdouble # convergence tolerance
     alpha::Cdouble # relaxation parameter
     cg_rate::Cdouble # for indirect, tolerance goes down like (1/iter)^cg_rate
     verbose::Int # boolean, write out progress
     warm_start::Int # boolean, warm start (put initial guess in Sol struct)
-    acceleration_lookback::Int # acceleration memory parameter
-    write_data_filename::Cstring
+    #acceleration_lookback::Int # acceleration memory parameter
+    #write_data_filename::Cstring
+    do_super_scs::Int #NEW /**< boolean: whether to use superscs or not */
+    k0 ::Int #NEW
+    c_bl::Cdouble #NEW
+    k1::Int #NEW
+    k2::Int #NEW
+    c1::Cdouble #NEW
+    sse::Cdouble #NEW
+    ls::Int #NEW
+    beta::Cdouble #NEW
+    sigma::Cdouble #NEW
+    #ScsDirectionType
+    direction::UInt32#NEW
+    thetabar::Cdouble #NEW
+    memory::Int #NEW
+    tRule::Int #NEW
+    broyden_init_scaling::Int #NEW
+    do_record_progress::Int #NEW
+    do_override_streams::Int #NEW
+    output_stream::Ptr{FILE} #cf lib_clangcommon.jl#105.
 
     SCSSettings() = new()
-    SCSSettings(normalize, scale, rho_x, max_iters, eps, alpha, cg_rate, verbose, warm_start, acceleration_lookback, write_data_filename) = new(normalize, scale, rho_x, max_iters, eps, alpha, cg_rate, verbose, warm_start, acceleration_lookback, write_data_filename)
+    SCSSettings(normalize, scale, rho_x,max_time_milliseconds,
+     max_iters, previous_max_iters,eps, alpha, cg_rate, verbose, warm_start,
+     do_super_scs,k0,c_dbl,k1,k2,c1,sse,ls,beta,sigma,direction,
+     thetabar,memory,tRule, broyden_init_scaling,do_record_progress,
+     do_override_streams,output_stream)= new(normalize, scale, rho_x,max_time_milliseconds,
+     max_iters, previous_max_iters,eps, alpha, cg_rate, verbose, warm_start,
+     do_super_scs,k0,c_dbl,k1,k2,c1,sse,ls,beta,sigma,direction,
+     thetabar,memory,tRule, broyden_init_scaling,do_record_progress,
+     do_override_streams,output_stream)
+#     acceleration_lookback, write_data_filename)
 end
+
+# struct SCSSettings
+#     normalize::Int # boolean, heuristic data rescaling
+#     scale::Cdouble # if normalized, rescales by this factor
+#     rho_x::Cdouble # x equality constraint scaling
+#     max_iters::Int # maximum iterations to take
+#     eps::Cdouble # convergence tolerance
+#     alpha::Cdouble # relaxation parameter
+#     cg_rate::Cdouble # for indirect, tolerance goes down like (1/iter)^cg_rate
+#     verbose::Int # boolean, write out progress
+#     warm_start::Int # boolean, warm start (put initial guess in Sol struct)
+#     acceleration_lookback::Int # acceleration memory parameter
+#     write_data_filename::Cstring
+#
+#     SCSSettings() = new()
+#     SCSSettings(normalize, scale, rho_x, max_iters, eps, alpha, cg_rate, verbose, warm_start, acceleration_lookback, write_data_filename) = new(normalize, scale, rho_x, max_iters, eps, alpha, cg_rate, verbose, warm_start, acceleration_lookback, write_data_filename)
+# end
 
 struct Direct end
 struct Indirect end
@@ -104,10 +114,33 @@ function _SCS_user_settings(default_settings::SCSSettings;
         cg_rate=default_settings.cg_rate,
         verbose=default_settings.verbose,
         warm_start=default_settings.warm_start,
-        acceleration_lookback=default_settings.acceleration_lookback,
-        write_data_filename=default_settings.write_data_filename
+
+        do_super_scs=default_settings.do_super_scs #NEW /**< boolean: whether to use superscs or not */
+        k0=default_settings.k0, #NEW
+        c_bl=default_settings.c_bl, #NEW
+        k1=default_settings.k1, #NEW
+        k2=default_settings.k2, #NEW
+        c1=default_settings.c1,#NEW
+        sse=default_settings.sse, #NEW
+        ls=default_settings.ls, #NEW
+        beta=default_settings.beta, #NEW
+        sigma=default_settings.sigma, #NEW
+        direction=default_settings.direction,#NEW
+        thetabar=default_settings.thetabar, #NEW
+        memory=default_settings.memory, #NEW
+        tRule=default_settings.tRule, #NEW
+        broyden_init_scaling=default_settings.broyden_init_scaling, #NEW
+        do_record_progress=default_settings.do_record_progress, #NEW
+        do_override_streams=default_settings.do_override_streams, #NEW
+        output_stream=default_settings.output_stream
+        # acceleration_lookback=default_settings.acceleration_lookback,
+        # write_data_filename=default_settings.write_data_filename
         )
-    return SCSSettings(normalize, scale, rho_x, max_iters, eps, alpha, cg_rate, verbose,warm_start, acceleration_lookback, write_data_filename)
+    return SCSSettings(normalize, scale, rho_x,max_time_milliseconds,
+     max_iters, previous_max_iters,eps, alpha, cg_rate, verbose, warm_start,
+     do_super_scs,k0,c_dbl,k1,k2,c1,sse,ls,beta,sigma,direction,
+     thetabar,memory,tRule, broyden_init_scaling,do_record_progress,
+     do_override_streams,output_stream)
 end
 
 function SCSSettings(linear_solver::Union{Type{Direct}, Type{Indirect}}; options...)
@@ -115,6 +148,7 @@ function SCSSettings(linear_solver::Union{Type{Direct}, Type{Indirect}}; options
     mmatrix = ManagedSCSMatrix(0,0,spzeros(1,1))
     matrix = Ref(SCSMatrix(mmatrix))
     default_settings = Ref(SCSSettings())
+    #----------------REVOIR !!!!!
     dummy_data = Ref(SCSData(0,0, Base.unsafe_convert(Ptr{SCSMatrix}, matrix),
         pointer([0.0]), pointer([0.0]),
         Base.unsafe_convert(Ptr{SCSSettings}, default_settings)))
@@ -143,6 +177,9 @@ struct SCSInfo
     iter::Int
     status::NTuple{32, Cchar} # char status[32]
     statusVal::Int
+    history_length::Int /**< \brief how many history entries */
+    cg_total_iters::Int /**< \brief total CG iterations (\c -1 if not defined) */
+
     pobj::Cdouble
     dobj::Cdouble
     resPri::Cdouble
@@ -152,9 +189,25 @@ struct SCSInfo
     relGap::Cdouble
     setupTime::Cdouble
     solveTime::Cdouble
+    linsys_total_solve_time_ms::Cdouble /**< \brief total linsys (e.g., CG) solve time in ms */
+progress_relgap::Cdouble /**< \brief relative gap history */
+progress_respri::Cdouble /**< \brief primal residual history */
+progress_resdual::Cdouble /**< \brief dual residual history */
+progress_pcost::Cdouble /**< \brief scaled primal cost history */
+progress_dcost::Cdouble /**< \brief sclaed dual cost history */
+progress_norm_fpr::Cdouble /**< \brief FPR history */
+progress_time::Cdouble /**< \brief Timestamp of iteration */scs_int *RESTRICT progress_iter; /**< \brief iterations when residulas are recorded */
+progress_mode::Int /**< \brief Mode of SuperSCS at each iteration */
+progress_ls::Int /**< \brief Number of line search iterations */
+allocated_memory::Culonglong /**< \brief Memory, in bytes, that was allocated to run the algorithm */
+
 end
 
-SCSInfo() = SCSInfo(0, ntuple(_ -> zero(Cchar), 32), 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+SCSInfo() = SCSInfo(0, ntuple(_ -> zero(Cchar), 32), 0, 0,0,
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    0,0,0,0
+)
 
 function raw_status(info::SCSInfo)
     s = collect(info.status)
