@@ -11,7 +11,7 @@ end
 function __init__()
     vnum = VersionNumber(SCS_version())
     depsdir = realpath(joinpath(dirname(@__FILE__),"..","deps"))
-    if vnum.major == 1 || (vnum.major == 2 && vnum.minor != 1)
+    if vnum.major != 1 || vnum.minor != 3
         error("Current SCS version installed is $(SCS_version()), but we require version 2.1.*")
     end
 end

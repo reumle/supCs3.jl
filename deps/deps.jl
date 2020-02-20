@@ -9,8 +9,8 @@ if isdefined((@static VERSION < v"0.7.0-DEV.484" ? current_module() : @__MODULE_
 elseif VERSION >= v"0.7.0-DEV.3382"
     import Libdl
 end
-const indirect = joinpath(dirname(@__FILE__), "../../scs/out/libscsindir.so")
-const direct = joinpath(dirname(@__FILE__), "../../scs/out/libscsdir.so")
+const indirect = joinpath(dirname(@__FILE__), "../../supJ/out/libscsindir.so")
+const direct = joinpath(dirname(@__FILE__), "../../supJ/out/libscsdir.so")
 function check_deps()
     global indirect
     if !isfile(indirect)
