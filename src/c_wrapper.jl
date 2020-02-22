@@ -62,14 +62,20 @@ function SCS_solve(T::Union{Type{Direct}, Type{Indirect}},
 
     cone = Ref(SCSCone(f, l, q, s, ep, ed, p))
     info = Ref(SCSInfo())
-
+    #statusStr = Ref(Base.unsafe_convert(Cstring,ones(UInt8,12)))
+    statusStr = Vector{UInt8}(undef, 12)
     Base.GC.@preserve managed_matrix matrix settings b c q s p begin
         p_work = SCS_init(T, data, cone, info)
-        status = SCS_solve(T, p_work, data, cone, solution, info)
+        #status = SCS_solve(T, p_work, data, cone, solution, info)
+        status = SCS_glob2(T, data, cone, solution, info,statusStr)
         SCS_finish(T, p_work)
     end
-
-    return Solution(primal_sol, dual_sol, slack, info[], status)
+    # aa=statusStr
+    # bb=Char.(aa)
+    # cc=findfirst(bb .== '\0')
+    # dd=accumulate(*,bb)[cc-1]
+    # info.
+    return Solution(primal_sol, dual_sol, slack, info[], statusStr,status)
 end
 
 # Wrappers for the direct C API.
@@ -103,6 +109,23 @@ for (T, lib) in zip([supCs3.Direct, supCs3.Indirect], [supCs3.direct, supCs3.ind
             return status
         end
 
+        # function SCS_glob(::Type{$T},  data::Ref{SCSData}, cone::Ref{SCSCone}, solution::SCSSolution, info::Ref{SCSInfo})
+        #     print("hello scs_glob")
+        #     status = ccall((:scs, $lib), Int,
+        #         (Ptr{SCSData}, Ptr{SCSCone}, Ref{SCSSolution}, Ref{SCSInfo}),
+        #         data, cone, solution, info)
+        #     print(info.x.status)
+        #     return status
+        # end
+
+        function SCS_glob2(::Type{$T},  data::Ref{SCSData}, cone::Ref{SCSCone}, solution::SCSSolution,
+            info::Ref{SCSInfo}, statusStr::Vector{UInt8})
+            status = ccall((:scsB, $lib), Int,
+                (Ptr{SCSData}, Ptr{SCSCone}, Ref{SCSSolution}, Ref{SCSInfo}, Ptr{UInt8}),
+                data, cone, solution, info,Base.unsafe_convert(Ptr{UInt8},statusStr))
+#            print(info.x.status)
+            return status
+        end
         function SCS_finish(::Type{$T}, p_work::Ptr{Nothing})
             ccall((:scs_finish, $lib), Nothing,
                 (Ptr{Nothing}, ),
