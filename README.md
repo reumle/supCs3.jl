@@ -1,4 +1,68 @@
-# SCS
+# supCs3 specifics (SCS instructions below)
+
+supCs3.jl is a fork of SCS.jl that wraps superSCS (a C library).
+
+In order to use it you have to
+* download and compile the C library in a julia compliant way.
+* download and build the julia package
+* [This is a WIP, not production quality by far, currently better suited to non novice users of Julia..]
+
+
+##### the C code
+1) compile it "the Julia way" (a first step to include it in a Julia package)
+
+2) the following works on "Windows 10/WSL" windows subsystem linux. It is likely (but not tested) that it would also work on straight linux. I **never** had any success on windows. Tips welcome.
+
+3) Also  many paths in the instructions below have to be adapted for your machine.
+
+4) compilation
+* in a bash shell
+```
+cd <library root>
+export JULIA_HOME=/home/elm/desktop/julia-1.3.1
+make OPT="3 -march=native" DLONG=1 USE_OPENMP=1 BLASLDFLAGS="-L$JULIA_HOME/lib/julia -lopenblas64_" BLAS64=1 BLASSUFFIX=_64_
+```
+5) C library tests (see <library root>/makefile)
+```
+export LD_LIBRARY_PATH="$JULIA_HOME/lib/julia"
+cd  <library root>
+export JULIA_HOME=/home/elm/desktop/julia-1.3.1
+make OPT="3 -march=native" DLONG=1 USE_OPENMP=1 BLASLDFLAGS="-L$JULIA_HOME/lib/julia -lopenblas64_" BLAS64=1 BLASSUFFIX=_64_ test
+out/UNIT_TEST_RUNNER_DIR
+```
+
+##### the julia package
+* clone  from this repo, and **checkout the supCs branch.**
+* in julia shell
+```
+# add dependencies
+Pkg.add(["Libdl","BinaryProvider","LinearAlgebra","MathOptInterface","MathProgBase","SparseArrays","Revise"])
+Pkg.develop(PackageSpec(path=< the path to your local directory with this package>))
+## eg Pkg.develop(PackageSpec(path="/home/elm/proj/dev/supCs3"))
+
+# compile. [first indicate the path to the directory with the C library]
+ENV["JULIA_SCS_LIBRARY_PATH"]="/home/elm/proj/dev/supJ/out"
+Pkg.build("supCs3")  
+using supCs3
+
+# run
+A = reshape([1.0],(1,1))
+solution = supCs3.SCS_solve(supCs3.Direct, 1, 1, A, [1.0], [1.0], 1, 0, Int[], Int[], 0, 0, Float64[]);
+```
+* in test mode (])
+```
+ test supCs3
+```
+This passes about 200 tests and fails about 10 before erroring.
+
+NB a very few additionnal hints
+====
+
+
+
+
+
+# SCS instructions
 
 [![Build Status](https://travis-ci.org/JuliaOpt/SCS.jl.svg?branch=master)](https://travis-ci.org/JuliaOpt/SCS.jl)
 [![Build status](https://ci.appveyor.com/api/projects/status/yb4yfg4oryw7yten/branch/master?svg=true)](https://ci.appveyor.com/project/mlubin/scs-jl/branch/master)
@@ -151,3 +215,7 @@ println(getvalue(take))
 # [  Gold] = 0.99999492720597
 # [Silver] = 0.4666851698368782
 ```
+# Julia Bag of Tricks
+4)
+* this is taken from an issue (#163) in SCS.jl github repo. If these instrctions fail, there is some more info over there.
+* "3" in `make OPT="3` is meant to be understood as `make -O3` so adapt if needed
