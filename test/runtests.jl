@@ -2,8 +2,10 @@ using Test
 using supCs3
 
 tests = ["direct.jl",
-         "indirect.jl",
-         "options.jl"]
+         "indirect.jl"
+         #,
+         #"options.jl"
+         ]
 
 include("test_problems.jl")
 
