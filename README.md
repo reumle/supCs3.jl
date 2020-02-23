@@ -182,7 +182,7 @@ The low level wrapper directly calls SCS and is also thoroughly documented in [l
 ### Convex and JuMP examples
 This example shows how we can model a simple knapsack problem with Convex and use SCS to solve it.
 ```julia
-using Convex, SCS
+using Convex, supCs3
 items  = [:Gold, :Silver, :Bronze]
 values = [5.0, 3.0, 1.0]
 weights = [2.0, 1.5, 0.3]

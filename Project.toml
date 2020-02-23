@@ -1,7 +1,7 @@
 name = "supCs3"
 uuid = "13c56d96-f22b-4fc2-8d3c-1e1c7b889f16"
 authors = ["reumle"]
-version = "0.2.0"
+version = "0.3.0"
 
 [deps]
 BinaryProvider = "b99e7846-7c00-51b0-8f62-c81ae34c0232"

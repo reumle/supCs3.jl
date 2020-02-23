@@ -223,7 +223,11 @@ end
 
 function raw_status(statusStr::Vector{UInt8})
     s = collect(statusStr)
-    len = findfirst(iszero, s) - 1
+    if (findfirst(iszero, s)===nothing)
+        return String("Bad result")
+    else
+        len = findfirst(iszero, s) - 1
+    end
     # There is no method String(::Vector{Cchar}) so we convert to `UInt8`.
     return String(UInt8[s[i] for i in 1:len])
 end
