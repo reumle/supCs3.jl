@@ -1,8 +1,8 @@
 ## supCs3.jl
-fork of SCS.jl in order to wrap superSCS
+fork of SCS.jl (v0.6.4) in order to wrap superSCS, another conic solver.
 
-the specific commits are **on branch supCs**, based on SCS v0.6.4.
+**switch to branch supCs**, where all the good stuff is.
 
-##### how to build the julia package
-see the sister repo at reumle/superScs
+link:https://github.com/reumle/supCs3.jl/tree/supCs
 
+superScs github https://kul-forbes.github.io/scs/
