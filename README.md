@@ -1,6 +1,7 @@
 # supCs3 specifics (SCS instructions below)
 
 supCs3.jl is a fork of SCS.jl that wraps superSCS (a C library).
+* **New  in v0.3** Now operates with Convex.jl.
 
 In order to use it you have to
 * download and compile the C library in a julia compliant way.
@@ -9,20 +10,21 @@ In order to use it you have to
 
 
 ##### the C code
-1) compile it "the Julia way" (a first step to include it in a Julia package)
+0) download it.`git clone https://github.com/reumle/superScs` will do. Let's call the directory where you put it `<library root>`
 
-2) the following works on "Windows 10/WSL" windows subsystem linux. It is likely (but not tested) that it would also work on straight linux. I **never** had any success on windows. Tips welcome.
+1) compile it "the Julia way" (a first step to include it later in a Julia package)
 
-3) Also  many paths in the instructions below have to be adapted for your machine.
+    * the following works on "Windows 10/WSL" windows subsystem linux. It is likely (but not tested) that it would also work on straight linux. I **never** had any success on windows. Tips welcome.
 
-4) compilation
-* in a bash shell
+    * Also  many paths in the instructions below have to be adapted for your machine.
+
+    * compilation:in a bash shell
 ```
 cd <library root>
-export JULIA_HOME=/home/elm/desktop/julia-1.3.1
+export JULIA_HOME=/home/elm/desktop/julia-1.3.1 # change with your Julia directory....
 make OPT="3 -march=native" DLONG=1 USE_OPENMP=1 BLASLDFLAGS="-L$JULIA_HOME/lib/julia -lopenblas64_" BLAS64=1 BLASSUFFIX=_64_
 ```
-5) C library tests (see <library root>/makefile)
+2) test it: (see also <library root>/Makefile)
 ```
 export LD_LIBRARY_PATH="$JULIA_HOME/lib/julia"
 cd  <library root>
@@ -32,16 +34,17 @@ out/UNIT_TEST_RUNNER_DIR
 ```
 
 ##### the julia package
-* clone  from this repo, and **checkout the supCs branch.**
-* in julia shell
+0)  clone  from this repo, `git clone https://github.com/reumle/superScs` . Let' scall the target directory `<supCs3>`
+   * **checkout the supCs branch.** Let'scall the
+1) index it to your julia system in julia shell, then compile it
 ```
 # add dependencies
 Pkg.add(["Libdl","BinaryProvider","LinearAlgebra","MathOptInterface","MathProgBase","SparseArrays","Revise"])
-Pkg.develop(PackageSpec(path=< the path to your local directory with this package>))
+Pkg.develop(PackageSpec(path=<supCs3>))
 ## eg Pkg.develop(PackageSpec(path="/home/elm/proj/dev/supCs3"))
 
 # compile. [first indicate the path to the directory with the C library]
-ENV["JULIA_SCS_LIBRARY_PATH"]="/home/elm/proj/dev/supJ/out"
+ENV["JULIA_SCS_LIBRARY_PATH"]="<library root>/out"
 Pkg.build("supCs3")  
 using supCs3
 
@@ -53,9 +56,8 @@ solution = supCs3.SCS_solve(supCs3.Direct, 1, 1, A, [1.0], [1.0], 1, 0, Int[], I
 ```
  test supCs3
 ```
-This passes about 200 tests and fails about 10 before erroring.
+This passes about 200 tests and fails about 10 before erroring.Failing tests are mostly about maximal tolerance not matched. (Don't know why yet, could be many things)
 
-NB a very few additionnal hints
 ====
 
 
