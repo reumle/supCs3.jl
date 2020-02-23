@@ -36,7 +36,7 @@ out/UNIT_TEST_RUNNER_DIR
 ##### the julia package
 0)  clone  from this repo, `git clone https://github.com/reumle/superScs` . Let' scall the target directory `<supCs3>`
    * **checkout the supCs branch.** Let'scall the
-1) index it to your julia system in julia shell, then compile it
+1) index it to your julia system then compile it. In julia shell:
 ```
 # add dependencies
 Pkg.add(["Libdl","BinaryProvider","LinearAlgebra","MathOptInterface","MathProgBase","SparseArrays","Revise"])
